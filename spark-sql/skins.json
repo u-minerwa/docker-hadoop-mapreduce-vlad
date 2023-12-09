@@ -1,0 +1,72 @@
+[
+    {
+      "SkinID": 0, 
+      "Name" : "AK-47 | Redline", 
+      "Float" : 1, 
+      "QualityValue": "Battle-Scarred", 
+      "IsStatTrack": false
+    },
+    {
+      "SkinID": 1,
+      "Name": "AWP | Asiimov", 
+      "Float": 0.222,
+      "QualityValue": "Field-Tested",
+      "IsStatTrack": true
+    },
+    {
+      "SkinID": 2,
+      "Name": "AWP | Dragon Lore", 
+      "Float": 0.02,
+      "QualityValue": "Factory New", 
+      "IsStatTrack": false
+    },
+    {
+      "SkinID": 3,
+      "Name": "P90 | Asiimov", 
+      "Float": 0.10,
+      "QualityValue": "Minimal Wear", 
+      "IsStatTrack": false
+    },
+    {
+      "SkinID": 4,
+      "Name": "PP-19 | Bison", 
+      "Float": 0.39,
+      "QualityValue": "Well-Worn",
+      "IsStatTrack": true
+    },
+    {
+      "SkinID": 5,
+      "Name": "FAMAS | Pulse", 
+      "Float": 0.4,
+      "QualityValue": "Well-Worn",
+      "IsStatTrack": false
+    },
+    {
+      "SkinID": 6,
+      "Name": "AK-47 | Vulkan", 
+      "Float": 0.03,
+      "QualityValue": "Factory New",
+      "IsStatTrack": false
+    },
+    {
+      "SkinID": 7,
+      "Name": "FAMAS | Pulse", 
+      "Float": 0.4,
+      "QualityValue": "Well-Worn", 
+      "IsStatTrack": false
+    },
+    {
+      "SkinID": 8,
+      "Name": "AWP | Redline", 
+      "Float": 0.16,
+      "QualityValue": "Field-Tested", 
+      "IsStatTrack": false
+    },
+    {
+      "SkinID": 9,
+      "Name": "M4A1-S | Decimator", 
+      "Float": 0.01,
+      "QualityValue": "Factory New", 
+      "IsStatTrack": true
+    }
+  ]

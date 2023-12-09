@@ -1,0 +1,8 @@
+[debug] > Exec(import, None, None)
+[error] Not a valid command: import (similar: export)
+[error] Not a valid project ID: import
+[error] Expected ':'
+[error] Not a valid key: import (similar: ideaPort, timingFormat)
+[error] import
+[error]       ^
+[debug] > Exec(idea-shell, None, None)

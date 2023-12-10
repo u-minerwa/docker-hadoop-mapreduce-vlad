@@ -32,9 +32,9 @@ object WeatherStreamingApp {
 
     val resultStream: DStream[Row] = jsonDFStream
       .filter("temperature is not null") // фильтруем записи без информации о температуре
-      .withColumn("date", to_date($"timestamp")) // извлекаем дату из временной метки
+      .withColumn("date", to_date($"date_time_now")) // извлекаем дату из временной метки, timestamp
       .groupBy($"date")
-      .agg(avg("temperature").alias("average_temperature"))
+      .agg(avg("temp").alias("average_temperature"))     // temperature 
 
     // Выводим результат в консоль
     resultStream.print()

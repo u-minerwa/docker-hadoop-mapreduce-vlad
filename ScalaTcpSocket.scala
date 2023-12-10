@@ -33,8 +33,8 @@ object HourlyMaxTemperatureApp {
 
     val resultStream: DStream[Row] = jsonDFStream
       .filter("temperature is not null") // фильтруем записи без информации о температуре
-      .groupBy(window($"timestamp", "1 hour"))
-      .agg(max("temperature").alias("max_temperature"))
+      .groupBy(window($"date_time_now", "1 hour"))      // timestamp
+      .agg(max("temp").alias("max_temperature"))     // temperature
 
     // Выводим результат в консоль
     resultStream.print()

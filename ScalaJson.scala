@@ -2,6 +2,9 @@ import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.sql.{SparkSession, DataFrame}
 import org.apache.spark.sql.functions._
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.StreamingContext._
+
 
 
 object WeatherStreamingApp {

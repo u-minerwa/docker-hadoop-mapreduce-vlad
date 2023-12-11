@@ -4,54 +4,44 @@ import org.apache.spark.sql.{SparkSession, DataFrame}
 import org.apache.spark.sql.functions._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext._
+import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.types._
+import spark.implicits._
 
 
 object HourlyMaxTemperatureApp {
   def main(args: Array[String]): Unit = {
-    // Создаем объект SparkConf и устанавливаем имя приложения
-    val sparkConf = new SparkConf().setAppName("HourlyMaxTemperatureApp")
-
-    // Создаем StreamingContext с интервалом 1 секунда
-    val ssc = new StreamingContext(sparkConf, Seconds(1))
-
-    // Указываем хост и порт для прослушивания данных
+    // Создаём объект Spark и устанавливаем имя приложения, создаём SparkSession для работы с DataFrame: 
+    val spark = SparkSession.builder.appName("WeatherStreaming").getOrCreate()
+    // Создаём StreamingContext с интервалом 35 секунд: 
+    val ssc = new StreamingContext(spark.sparkContext, Seconds(35))
+    // Указываем хост и порт для прослушивания данных:
     val host = "localhost"
     val port = 9999
-
-    // Создаем DStream, который будет принимать данные из сетевого источника
+    // Создаём jsonStream, который будет принимать данные из сетевого источника: 
     val jsonStream = ssc.socketTextStream(host, port)
+    
+    val schema = StructType(Seq(
+      StructField("city", StringType, true),
+      StructField("temp", FloatType, true)
+    ))
 
-    // Создаем SparkSession для работы с DataFrame
-    val spark = SparkSession.builder().config(sparkConf).getOrCreate()
-
-    import spark.implicits._
-
-    // Пример: агрегация максимальной температуры за каждый час
-    val jsonDFStream: DStream[DataFrame] = jsonStream.map { jsonString =>
-      // Парсим JSON и создаем DataFrame
-      val jsonDF = spark.read.json(Seq(jsonString).toDS())
-      jsonDF
-    }
-
-    val resultStream: DStream[Row] = jsonDFStream
-      .filter("temperature is not null") // фильтруем записи без информации о температуре
-      .groupBy(window($"date_time_now", "1 hour"))      // timestamp
-      .agg(max("temp").alias("max_temperature"))     // temperature
-
-    // Выводим результат в консоль
-    resultStream.print()
-
-    // Сохраняем результат в файл
-    resultStream.foreachRDD { rdd =>
-      val resultDF = rdd.toDF()
-      resultDF.write.mode("append").json("/scalasaves/prefix1") 
+    // Пример: агрегация средней температуры за определённое время: 
+    jsonStream.foreachRDD { rdd =>
+      if (!rdd.isEmpty()) {
+        // Парсим JSON и создаём DataFrame:
+        val weatherDF = spark.read.schema(schema).json(rdd)
+        // Создаём таблицу: 
+        weatherDF.createOrReplaceTempView("weather")
+        // Задаём SQL-запрос и аггрегируем данные:
+        val aggregatedDF = spark.sql("SELECT city, AVG(temp) as avg_temperature FROM weather GROUP BY city")
+        aggregatedDF.show()
+        aggregatedDF.write.mode("append").csv("/output/aggregated_results")
+      }
     }
 
     // Запускаем стриминг
     ssc.start()
-
-    // Ожидаем завершения работы
-    ssc.awaitTermination()
   }
 }
 

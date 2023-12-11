@@ -1,57 +1,49 @@
 import org.apache.spark.SparkConf
-import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.sql.{SparkSession, DataFrame}
 import org.apache.spark.sql.functions._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext._
-
+import org.apache.spark.streaming.dstream.DStream
+import org.apache.spark.sql.Row
+import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.apache.spark.sql.{SparkSession, Row}
+import org.apache.spark.sql.types._
+import spark.implicits._
 
 
 object WeatherStreamingApp {
   def main(args: Array[String]): Unit = {
-    // Создаем объект SparkConf и устанавливаем имя приложения
-    val sparkConf = new SparkConf().setAppName("WeatherStreamingApp")
+    // Создаём объект SparkSession и устанавливаем имя приложения, создаём SparkSession для работы с DataFrame: 
+    val spark = SparkSession.builder.appName("WeatherStreaming").getOrCreate()
+    // Создаём StreamingContext с интервалом 35 секунд: 
+    val ssc = new StreamingContext(spark.sparkContext, Seconds(35))
 
-    // Создаем StreamingContext с интервалом 1 секунда
-    val ssc = new StreamingContext(sparkConf, Seconds(1))
-
-    // Указываем директорию, где будут появляться новые файлы
-    val inputDirectory = "/../SparkStreamingProj/jsons" 
-
-    // Создаем DStream, который будет принимать данные из файлов
+    val schema = StructType(Seq(
+      StructField("city", StringType, true),
+      StructField("temp", FloatType, true),
+    ))
+    // Указываем директорию, где будут появляться новые файлы:
+    val inputDirectory = "jsons" 
+    // Создаем jsonStream, который будет принимать данные из файлов:
     val jsonStream = ssc.textFileStream(inputDirectory)
 
-    // Создаем SparkSession для работы с DataFrame
-    val spark = SparkSession.builder().config(sparkConf).getOrCreate()
+    //ВАРИАНТ С WINDOW
+    // val windowedWeatherStream = jsonStream.window(Seconds(35), Seconds(35))
 
-    import spark.implicits._
-
-    // Пример: агрегация средней температуры за каждый день
-    val jsonDFStream: DStream[DataFrame] = jsonStream.map { jsonString =>
-      // Парсим JSON и создаем DataFrame
-      val jsonDF = spark.read.json(Seq(jsonString).toDS())
-      jsonDF
+    // Пример: агрегация средней температуры за определённый период времени: 
+    jsonStream.foreachRDD { rdd =>
+      if (!rdd.isEmpty()) {
+        val jsonDF = spark.read.schema(schema).json(rdd)
+        val avgTemperatureDF = jsonDF.select("city", "temp").groupBy("city").agg(avg("temp").as("avg_temperature"))
+        avgTemperatureDF.show()
+        avgTemperatureDF.write.mode("append").csv("/jsonsOutput/average_temperature")
+      }
     }
 
-    val resultStream: DStream[Row] = jsonDFStream
-      .filter("temperature is not null") // фильтруем записи без информации о температуре
-      .withColumn("date", to_date($"date_time_now")) // извлекаем дату из временной метки, timestamp
-      .groupBy($"date")
-      .agg(avg("temp").alias("average_temperature"))     // temperature 
-
-    // Выводим результат в консоль
-    resultStream.print()
-
-    // Сохраняем результат в файл
-    resultStream.foreachRDD { rdd =>
-      val resultDF = rdd.toDF()
-      resultDF.write.mode("append").json("/scalasaves/prefix2") 
-    }
-
-    // Запускаем стриминг
+    // Запускаем стриминг:
     ssc.start()
 
-    // Ожидаем завершения работы
+    // Ожидаем завершения работы: 
     ssc.awaitTermination()
   }
 }

@@ -42,7 +42,6 @@ object WeatherStreamingApp {
 
     // Запускаем стриминг:
     ssc.start()
-
     // Ожидаем завершения работы: 
     ssc.awaitTermination()
   }

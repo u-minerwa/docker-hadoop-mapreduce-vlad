@@ -108,17 +108,17 @@ services:
     build: JavaWeather/
     container_name: javaweather
 
-  socketweather:
-    build: SocketWeather/
-    container_name: socketweather
-    ports:
-      - 9999:9998
-    depends_on: 
-      - spark-master
-    environment:
-      SERVICE_PRECONDITION: "spark-master:9999"
-    networks:
-      - spark_weather
+  # socketweather:
+  #   build: SocketWeather/
+  #   container_name: socketweather
+  #   ports:
+  #     - 9999:9998
+  #   depends_on: 
+  #     - spark-master
+  #   environment:
+  #     SERVICE_PRECONDITION: "spark-master:9999"
+  #   networks:
+  #     - spark_weather
 
   json-sender:
     build: spark_streaming/
@@ -145,7 +145,7 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka-test
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-test:2181
-      KAFKA_CREATE_TOPICS: "skins:1:1,test:1:1"
+      # KAFKA_CREATE_TOPICS: "skins:1:1,test:1:1"
     depends_on:
       - zookeeper
     volumes:
@@ -153,35 +153,35 @@ services:
     networks:
       - spark_kafka
 
-  kafka-producer:
-    build: kafka-producer/
-    container_name: kafka-producer
-    depends_on:
-      - kafka
-    environment:
-      SERVICE_PRECONDITION: "kafka-test:9092"
-    networks:
-      - spark_kafka
+  # kafka-producer:
+  #   build: kafka-producer/
+  #   container_name: kafka-producer
+  #   depends_on:
+  #     - kafka
+  #   environment:
+  #     SERVICE_PRECONDITION: "kafka-test:9092"
+  #   networks:
+  #     - spark_kafka
 
-  kafka-consumer:
-    build: kafka-consumer/
-    container_name: kafka-consumer
-    depends_on:
-      - kafka
-    environment:
-      SERVICE_PRECONDITION: "kafka-test:9092"
-    networks:
-      - spark_kafka
+  # kafka-consumer:
+  #   build: kafka-consumer/
+  #   container_name: kafka-consumer
+  #   depends_on:
+  #     - kafka
+  #   environment:
+  #     SERVICE_PRECONDITION: "kafka-test:9092"
+  #   networks:
+  #     - spark_kafka
   
-  mongo:
-    container_name: mongo-1
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    networks:
-      - spark_kafka
+  # mongo:
+  #   container_name: mongo-1
+  #   image: mongo
+  #   restart: always
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   networks:
+  #     - spark_kafka
 
 networks:
   spark_kafka:

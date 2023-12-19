@@ -2,7 +2,7 @@ version: "3"
 
 services:
   namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8 
     container_name: namenode
     restart: always
     ports:
@@ -145,7 +145,6 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka-test
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-test:2181
-      # KAFKA_CREATE_TOPICS: "skins:1:1,test:1:1"
     depends_on:
       - zookeeper
     volumes:

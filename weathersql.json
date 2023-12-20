@@ -1,0 +1,61 @@
+[
+    {
+        "ID" : 1,
+        "City" : "Saratov",
+        "Country" : "Russia"
+    },
+
+    {
+        "ID" : 2,
+        "City" : "Moscow",
+        "Country" : "Russia"
+    },
+
+    {
+        "ID" : 3,
+        "City" : "Berlin",
+        "Country" : "Germany"
+    },
+
+    {
+        "ID" : 4,
+        "City" : "Paris",
+        "Country" : "France"
+    },
+
+    {
+        "ID" : 5,
+        "City" : "NewYork",
+        "Country" : "USA"
+    },
+
+    {
+        "ID" : 6,
+        "City" : "Vashington",
+        "Country" : "USA"
+    },
+
+    {
+        "ID" : 7,
+        "City" : "Shostka",
+        "Country" : "Ukraine"
+    },
+
+    {
+        "ID" : 8,
+        "City" : "Volgograd",
+        "Country" : "Russia"
+    },
+
+    {
+        "ID" : 9,
+        "City" : "Samara",
+        "Country" : "Russia"
+    },
+
+    {
+        "ID" : 10,
+        "City" : "Marsel",
+        "Country" : "France"
+    }
+]
